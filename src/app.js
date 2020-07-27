@@ -1,6 +1,8 @@
 const express = require('express');
 const path = require('path');
 const hbs = require('hbs');
+const geocode = require('./utils/geocode');
+const forecast = require('./utils/forecast');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -21,6 +23,7 @@ app.use(express.static(publicDirectoryPath));
 app.get('', (req, res) => {
     res.render('index', {
         title: 'Weather!',
+        message: 'snowing',
         name: 'Fred'
     });
 });
@@ -41,23 +44,51 @@ app.get('/help', (req, res) => {
 });
 
 app.get('/weather', (req, res) => {
-    res.send({
-        temp: 40,
-        place: 'here',
-        forecast: 'fucking snow'
+    if (!req.query.address) {
+        res.send({
+            error: 'Address is mandatory'
+        })
+    }
+    const place = req.query.address;
+    geocode(place, (err, {lat, lon, location} = {}) => {
+        if (err) {
+            return res.send({
+                error: err.message
+            })
+        }
+        forecast(lat, lon, (error, result) => {
+            if (error) {
+                return res.send({
+                    error: error.message
+                })
+            }
+            res.send({
+                title: 'Weather',
+                temp: result.temperature,
+                forecast: result.description,
+                location
+            });
+
+        })
 
     });
 });
 
+app.get('/products', (req, res) => {
+
+})
+
 app.get('/help/*', (req, res) => {
     res.render('404', {
+        title: '404',
         message: 'Help page not found',
         name: 'Fred'
     });
 });
 
 app.get('*', (req, res) => {
-    res.render( '404', {
+    res.render('404', {
+        title: '404',
         message: 'Page not found',
         name: 'Fred'
     });
