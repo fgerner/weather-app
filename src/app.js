@@ -53,7 +53,7 @@ app.get('/weather', (req, res) => {
     geocode(place, (err, {lat, lon, location} = {}) => {
         if (err) {
             return res.send({
-                error: err.message
+                err
             })
         }
         forecast(lat, lon, (error, result) => {
