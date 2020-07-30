@@ -23,7 +23,7 @@ app.use(express.static(publicDirectoryPath));
 app.get('', (req, res) => {
     res.render('index', {
         title: 'Weather!',
-        message: 'snowing',
+        message: 'Get your local weather',
         name: 'Fred'
     });
 });
@@ -52,9 +52,7 @@ app.get('/weather', (req, res) => {
     const place = req.query.address;
     geocode(place, (err, {lat, lon, location} = {}) => {
         if (err) {
-            return res.send({
-                err
-            })
+            return res.send({ err });
         }
         forecast(lat, lon, (error, result) => {
             if (error) {
@@ -66,17 +64,12 @@ app.get('/weather', (req, res) => {
                 title: 'Weather',
                 temp: result.temperature,
                 forecast: result.description,
-                location
+                location,
+                feelslike: result.feelslike
             });
-
         })
-
     });
 });
-
-app.get('/products', (req, res) => {
-
-})
 
 app.get('/help/*', (req, res) => {
     res.render('404', {
