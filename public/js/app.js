@@ -12,6 +12,7 @@ weatherForm.addEventListener('submit', (e) => {
     }
 
     messageOne.innerText = 'Loading...';
+    messageTwo.innerText = '';
 
     fetch('/weather?address=' + place).then((response) => {
         response.json().then((data) => {
@@ -19,7 +20,7 @@ weatherForm.addEventListener('submit', (e) => {
                 messageOne.textContent = data.err;
             } else {
                 messageOne.textContent = data.location;
-                messageTwo.textContent = `${data.forecast} with a temperature of ${data.temp} witch feels like ${data.feelslike}`;
+                messageTwo.textContent = `${data.forecast} with a temperature of ${data.temp} witch feels like ${data.feelslike} and the UV-index are ${data.uvindex}`;
             }
         })
     });
